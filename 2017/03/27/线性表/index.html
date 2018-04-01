@@ -1,0 +1,835 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="数据结构已经把线性表给上完了，我也要记录点什么，不多说，进主题。  线性表是指那些在逻辑上的一个有限序列的一种数据结构，我们平日所见的表，数组等多是此种类型。至于按存储方式区分开来，包括但不限于顺序表和链表。本文便是记录顺序表和链表的基本含义和操作。说明：在这里我用C++语言来表述数据结构，为有条理和有层次，这里结构化书写，不封装成类。小表的排序统一使用简单插入增排序。">
+<meta name="keywords" content="C++,周报">
+<meta property="og:type" content="article">
+<meta property="og:title" content="线性表">
+<meta property="og:url" content="http://yoursite.com/2017/03/27/线性表/index.html">
+<meta property="og:site_name" content="始终">
+<meta property="og:description" content="数据结构已经把线性表给上完了，我也要记录点什么，不多说，进主题。  线性表是指那些在逻辑上的一个有限序列的一种数据结构，我们平日所见的表，数组等多是此种类型。至于按存储方式区分开来，包括但不限于顺序表和链表。本文便是记录顺序表和链表的基本含义和操作。说明：在这里我用C++语言来表述数据结构，为有条理和有层次，这里结构化书写，不封装成类。小表的排序统一使用简单插入增排序。">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-04-01T07:14:30.953Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="线性表">
+<meta name="twitter:description" content="数据结构已经把线性表给上完了，我也要记录点什么，不多说，进主题。  线性表是指那些在逻辑上的一个有限序列的一种数据结构，我们平日所见的表，数组等多是此种类型。至于按存储方式区分开来，包括但不限于顺序表和链表。本文便是记录顺序表和链表的基本含义和操作。说明：在这里我用C++语言来表述数据结构，为有条理和有层次，这里结构化书写，不封装成类。小表的排序统一使用简单插入增排序。">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/03/27/线性表/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>线性表 | 始终</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">始终</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">鸿雁长飞光不度，鱼龙潜跃水成文</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+</li>
+
+      
+
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/03/27/线性表/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="始终">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="始终">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">线性表</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-03-27T00:00:00+08:00">2017-03-27</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/数据结构/" itemprop="url" rel="index"><span itemprop="name">数据结构</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <blockquote>
+<p>数据结构已经把线性表给上完了，我也要记录点什么，不多说，进主题。</p>
+</blockquote>
+<p><strong>线性表</strong>是指那些在逻辑上的一个有限序列的一种数据结构，我们平日所见的表，数组等多是此种类型。至于按存储方式区分开来，包括但不限于顺序表和链表。本文便是记录顺序表和链表的基本含义和操作。<br><strong>说明：</strong>在这里我用<strong>C++语言</strong>来表述数据结构，为有条理和有层次，这里结构化书写，不封装成类。小表的排序统一使用简单插入增排序。<br><a id="more"></a></p>
+<h2 id="顺序表"><a href="#顺序表" class="headerlink" title="顺序表"></a>顺序表</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>顺序表是一种定义在<strong>数组</strong>上的类型，既然是数组，免不了大小已经确定的问题，所以用<strong>maxsize</strong>来限制大小，可怎么也要有点个性啊，故用<strong>length</strong>来标记大小。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">typedef int classname;</span><br><span class="line">const size_t maxsize = 99;</span><br><span class="line">struct SqLink</span><br><span class="line">&#123;</span><br><span class="line">	classname data[maxsize];</span><br><span class="line">    size_t length;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h3 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h3><h4 id="创建—create"><a href="#创建—create" class="headerlink" title="创建—create"></a>创建—create</h4><p>屌丝数组要变成高富帅顺序表了，OK，对号入座就行。<br><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">void create(SqLink* &amp;L, classname a[], size_t n)</span><br><span class="line">&#123;</span><br><span class="line">	L = new SqLink;</span><br><span class="line">	L-&gt;length = n;</span><br><span class="line">	for (size_t i = 0; i &lt; L-&gt;length; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		L-&gt;data[i] = a[i];</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="初始化—init"><a href="#初始化—init" class="headerlink" title="初始化—init"></a>初始化—init</h4><p>来一个空场地，至于有哪些人先别管。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(SqLink* &amp;L)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	L = <span class="keyword">new</span> SqLink;</span><br><span class="line">	L-&gt;length = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="销毁—destory"><a href="#销毁—destory" class="headerlink" title="销毁—destory"></a>销毁—destory</h4><p>我喜欢删除，是格式化的那种。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">destory</span><span class="params">(SqLink* &amp;L)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">delete</span> L;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="插入–insert"><a href="#插入–insert" class="headerlink" title="插入–insert"></a>插入–insert</h4><p>想要在第order个位置插入某人c，首先得给它空个座位出来吧，怎么空座位？在这order位置后面的人统统往后挪一个位置就好了；然后它再<strong>无后虑之忧</strong>坐上去，因为这样就不会把其它人不小心的弄丢了。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">insert</span><span class="params">(SqLink* &amp;L, <span class="keyword">size_t</span> order, classname c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (order &lt; <span class="number">1</span> || order &gt; L-&gt;length + <span class="number">1</span>)      <span class="comment">//条件检测</span></span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	order--;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">size_t</span> i = L-&gt;length; i &gt; order; i--)   <span class="comment">//往后挪位</span></span><br><span class="line">		L-&gt;data[i] = L-&gt;data[i - <span class="number">1</span>];</span><br><span class="line">	L-&gt;data[order] = c;</span><br><span class="line">	L-&gt;length++;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="删除–del"><a href="#删除–del" class="headerlink" title="删除–del"></a>删除–del</h4><p>完了，我要被挤出去了，我能想象我被挤出去的时候，我后面的人就都要往前进一步的位置了，弟兄们，再见。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">del</span><span class="params">(SqLink* &amp;L, <span class="keyword">size_t</span> order, classname &amp;c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (order &lt; <span class="number">1</span> || order &gt; L-&gt;length + <span class="number">1</span>)         <span class="comment">//条件检测</span></span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	c = L-&gt;data[--order];</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">size_t</span> i = order; i &lt; L-&gt;length - <span class="number">1</span>; i++)   <span class="comment">//后齐进一</span></span><br><span class="line">		L-&gt;data[i] = L-&gt;data[i + <span class="number">1</span>];</span><br><span class="line">	L-&gt;length--;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="更新—update"><a href="#更新—update" class="headerlink" title="更新—update"></a>更新—update</h4><p>顺序表的每个人都擅长加工资。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">update</span><span class="params">(SqLink* &amp;L, <span class="keyword">size_t</span> order, classname c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (order &lt; <span class="number">1</span> || order &gt; L-&gt;length + <span class="number">1</span>)         <span class="comment">//条件检测</span></span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	L-&gt;data[--order] = c;          <span class="comment">//顺序表优势之一</span></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="查询—select"><a href="#查询—select" class="headerlink" title="查询—select"></a>查询—select</h4><p>相对来说，哪个人不老实也轻易感觉到。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">select</span><span class="params">(SqLink* L, <span class="keyword">size_t</span> order, classname &amp;c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (order &lt; <span class="number">1</span> || order &gt; L-&gt;length + <span class="number">1</span>)         <span class="comment">//条件检测</span></span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	c = L-&gt;data[--order];         <span class="comment">//顺序表优势之二</span></span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="排序—sort"><a href="#排序—sort" class="headerlink" title="排序—sort"></a>排序—sort</h4><p>从我们打牌的时候给牌排序而得，<strong>从左往右，分有序区和无序区，开始只有第一个是有序区，后面的全为无序区</strong>。从第二个开始，我看看我应该在前面哪个正确的位置，然后我插入到那（插入？请先挪位）；接着第三个，我看看我应该在前面两个哪个位置，然后我插入那（插入？请先挪位）；接着第四个，我看看我应该在前面三个中哪个位置，插入到那（插入？请先挪位）……进行到最后一个，所有人都找到了正确的位置，于是便成了序。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sort</span><span class="params">(SqLink *L)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">1</span>; i &lt; L-&gt;length; i++)</span><br><span class="line">	&#123;</span><br><span class="line">	    classname t = L-&gt;data[i];</span><br><span class="line">		<span class="keyword">size_t</span> j = i<span class="number">-1</span>;</span><br><span class="line">		<span class="keyword">while</span> (j &gt;= <span class="number">0</span> &amp;&amp; L-&gt;data[j] &gt; t)     <span class="comment">//挪位</span></span><br><span class="line">		&#123;</span><br><span class="line">			L-&gt;data[j + <span class="number">1</span>] = L-&gt;data[j];</span><br><span class="line">			j--;</span><br><span class="line">		&#125;</span><br><span class="line">		L-&gt;data[j+<span class="number">1</span>] = t;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="链表"><a href="#链表" class="headerlink" title="链表"></a>链表</h2><h3 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h3><p>你会了单链表，触类旁通就很舒服了，所以我只说单链表，什么循环加双链的全都是我的继承者。走起。<br>这链表啊，你别被他给吓着了，待我絮絮叨叨，你肯定认为啊不过如此，跟着我想象哦。<br>假设你在这样一个房间里面，地上有一些<strong>封面没有书名</strong>的书，<strong>书名</strong>在哪呢，书名写在书里面去了，可是封面上面写了什么？上面写了一堆你看不懂的<strong>数字加英文组合</strong>，姑且把这个看不懂的数字加英文组合起个名字叫做<strong>id，id都是不同的，而且id和书本封面一体，不可修改，但这不妨碍你自己在一张纸上记录id，修改id，在一定程度上，id等于书</strong>。地上还有一只铅笔和一只橡皮擦；<strong>也有一些毫无内容的书，也就是没id没书名都空白的</strong>。现在，你有一个任务，把这些<strong>有id的书连接成一个相互有联系的一种状态</strong>，也就是书与书之间建立一对一的联系，怎么办？按id也就是数字加英文排序，那也太累了；随意排列，怕你记不住。聪明的你想到一个似乎一套可行的方案。这个方案就是我们接下来的重点了，先分析分析，不急。</p>
+<ol>
+<li><strong>解剖节点</strong><br> <strong>数据域</strong>？是节点的内容吧，这个没什么，我用书名来替代你。<br> <strong>指针</strong>？知道你是拦路虎，也知道你是字母加数字组合，不过指向这个箭头是人赋予你含义的，OK，我看用id来代替你看可行不可行。</li>
+<li><strong>定义节点</strong><br> 这些书最后一页都留有一个空白的地方，是不是可以在这写上其它书的封面id呢？如果写上了，那把一本书看作一个节点，<strong>那么书里面就包含书名和id了</strong>，这个id还<strong>“指向”</strong>书呢，这也太像节点了！嗯，就这么干。</li>
+</ol>
+<figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">int</span> classname;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Node</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	classname data;</span><br><span class="line">	Node *next;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure>
+<h3 id="基本操作-1"><a href="#基本操作-1" class="headerlink" title="基本操作"></a>基本操作</h3><h4 id="创建"><a href="#创建" class="headerlink" title="创建"></a>创建</h4><p>刚才留有一个任务说有id的书连接成一个相互有联系的一种状态，其实就是一种创建的过程了，依照刚才定义节点的思路，在书的最后一页用铅笔写上下一本书的id，至于下一本书是什么，不管，我在记录的时候手里从地上随便拿起的哪本书就是下一本书。一本接着一本记录下去，直到完毕。可是这样的话我必须不能忽略的一本书，那就是头一本书，它是那么的重要，有它我之前的记录才有意义，否则我下次需要展现这个成果的时候都不知道从哪一本书开始。<strong>想到这些，所以为表示第一本书的特殊，你在地上找到一本毫无空白没id没书名的书，你在这本书上刻上了id，不写书名，在最后一页记录下一本书的id，一个接着一个，像是一个链条似的</strong>。那么你的头一本书就像如下：<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Node* head;</span><br></pre></td></tr></table></figure></p>
+<p>为了这个书链子有个终结的地方，你自己规定：哪一本书最后一本没写id，哪一本就是最后一本。<br>没错，刚才的过程就是一个尾插法建表的过程。在最后一页写上下一本书的id是指针指向，在地上随手拿起一本书类似创建新节点的过程。这种建表符合逻辑（正序），再具体的就是如下的代码了。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">create</span><span class="params">(Node* &amp;head, classname a[], <span class="keyword">size_t</span> n)</span> <span class="comment">//尾插法</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	head = <span class="keyword">new</span> Node;</span><br><span class="line">	Node* p = head;   </span><br><span class="line">	Node* q = head;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		p = <span class="keyword">new</span> Node;        <span class="comment">//拿起书本</span></span><br><span class="line">		p-&gt;data = a[i];     </span><br><span class="line">		q-&gt;next = p;         <span class="comment">//在最后一页写id</span></span><br><span class="line">		q = p;</span><br><span class="line">	&#125;</span><br><span class="line">	q-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>现在要求你用和刚才对唱的办法建表，也就是在逻辑上反着的别扭建法，试想如下过程。<br>有了头一本书head，拿起一本书，我在这本书上最后一页不写id，<strong>因为我想把这本书作为最后一本书</strong>；接着再拿起一本书，那么这本书肯定就是倒数第二本书了，故在最后一页写上最后一本的id，然后头一本书head的最后一页机上这本书id；接着再拿起一本，那么这本书得是倒数第三本书了，故在最后一页写上倒数第二本id，然后修改头一本书的id为这本书id；……如此下来，先拿起的书按次序排到后面了，后拿起的书按次序排到前面了，逻辑上反序成功。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">create</span><span class="params">(Node* &amp;head, classname a[], <span class="keyword">size_t</span> n)</span>    <span class="comment">//头插法</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	head = <span class="keyword">new</span> Node;</span><br><span class="line">	Node* p = head;</span><br><span class="line">	head-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">	&#123;</span><br><span class="line">		p = <span class="keyword">new</span> Node;</span><br><span class="line">		p-&gt;data = a[i];</span><br><span class="line">		p-&gt;next = head-&gt;next;     <span class="comment">//指向它前面拿起的一本，想想，其实永远都是head的下一本</span></span><br><span class="line">		head-&gt;next = p;           <span class="comment">//head的下一本书是刚才拿起的</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><p>白手起家，手里只有空书。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(Node* &amp;head)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	head = <span class="keyword">new</span> Node;</span><br><span class="line">	head-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="销毁"><a href="#销毁" class="headerlink" title="销毁"></a>销毁</h4><p>我要完全的毁尸灭迹，怎么办呢，我不能直接撕掉任何一本书，因为我要靠它找到下一本书并毁掉。所以我要做一个准备，在一张白纸上先记录下本书，再毁掉当前书本，又先记录后毁掉，如此进行直到最后。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">destory</span><span class="params">(Node* &amp;head)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Node* q = head;</span><br><span class="line">	Node* p = head-&gt;next;     <span class="comment">//记录下本书</span></span><br><span class="line">	<span class="keyword">while</span> (p != <span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="keyword">delete</span> q;          <span class="comment">//销毁当前书</span></span><br><span class="line">		q = p;             <span class="comment">//下一组</span></span><br><span class="line">		p = p-&gt;next;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="插入"><a href="#插入" class="headerlink" title="插入"></a>插入</h4><p>嗯，你想把某本书c插到第order个位置，怎么也得先找到order-1个位置的书本，这时候你还不能直接改order-1个书本最后一页内容为c的id，否则这条书链就在这断了呀，原先的第order个的书本再也无法找到，为避免此种情况，<strong>必须先在某本书s最后一页写上原先的第order个书本，然后就改order-1个书本最后一页内容为c的id</strong>，这样才像个插入的样。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">insert</span><span class="params">(Node* &amp;head, <span class="keyword">size_t</span> order, classname c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Node* p = head;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; order - <span class="number">1</span> &amp;&amp; p != <span class="literal">NULL</span>; i++)</span><br><span class="line">		p = p-&gt;next;</span><br><span class="line">	<span class="keyword">if</span> (p == <span class="literal">NULL</span>) <span class="keyword">return</span> <span class="literal">false</span>;        <span class="comment">//是否找到第order-1本书p</span></span><br><span class="line">	Node* q = <span class="keyword">new</span> Node;</span><br><span class="line">	q-&gt;data = c;</span><br><span class="line">	q-&gt;next = p-&gt;next;</span><br><span class="line">	p-&gt;next = q;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="删除"><a href="#删除" class="headerlink" title="删除"></a>删除</h4><p>和之前销毁整条书链类似，同样和插入一个书本类似。先找到第order-1本书，这时候可以直接改最后一页的id内容为下一本的下一本了，那中间略过的一本书间接的被移除书链。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">del</span><span class="params">(Node* &amp;head, <span class="keyword">size_t</span> order, classname &amp;c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Node* p = head;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; order - <span class="number">1</span> &amp;&amp; p != <span class="literal">NULL</span>; i++)</span><br><span class="line">		p = p-&gt;next;</span><br><span class="line">	<span class="keyword">if</span> (p == <span class="literal">NULL</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	Node* q = p-&gt;next;</span><br><span class="line">	<span class="keyword">if</span> (q == <span class="literal">NULL</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	p-&gt;next =q-&gt;next;  <span class="comment">//条件满足，直接修改</span></span><br><span class="line">	c = q-&gt;data;         </span><br><span class="line">	<span class="keyword">delete</span> q;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="更新"><a href="#更新" class="headerlink" title="更新"></a>更新</h4><p>一本书不满意自己的low书名，说：我要改书名。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">update</span><span class="params">(Node* &amp;head, <span class="keyword">size_t</span> order, classname c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Node *p = head;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; order &amp;&amp; p != <span class="literal">NULL</span>; i++)</span><br><span class="line">		p = p-&gt;next;</span><br><span class="line">	<span class="keyword">if</span> (p == <span class="literal">NULL</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	p-&gt;data = c;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="查询"><a href="#查询" class="headerlink" title="查询"></a>查询</h4><p>和更新类似<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">select</span><span class="params">(Node* head, <span class="keyword">size_t</span> order, classname &amp;c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Node *p = head;</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; order &amp;&amp; p != <span class="literal">NULL</span>; i++)</span><br><span class="line">		p = p-&gt;next;</span><br><span class="line">	<span class="keyword">if</span> (p == <span class="literal">NULL</span>) <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	c = p-&gt;data;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="排序"><a href="#排序" class="headerlink" title="排序"></a>排序</h4><p>只要你理解了顺序表里面的插入排序，你就能想象在链表里面该会是怎样的插入？没有了下标，就只能依靠id来了，同样，第一个有序，相当于重建一条链，后面的一个个的找到自己的位置，就这样，看下面，你能明白的。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">sort</span><span class="params">(Node* &amp;head)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Node* p = head-&gt;next-&gt;next;</span><br><span class="line">	head-&gt;next-&gt;next = <span class="literal">NULL</span>;       <span class="comment">//重建有序区</span></span><br><span class="line">	Node* q;</span><br><span class="line">	Node* r;</span><br><span class="line">	<span class="keyword">while</span> (p != <span class="literal">NULL</span>)</span><br><span class="line">	&#123;</span><br><span class="line">		q = p-&gt;next;</span><br><span class="line">		r = head;</span><br><span class="line">		<span class="keyword">while</span> (r-&gt;next != <span class="literal">NULL</span> &amp;&amp; r-&gt;next-&gt;data &lt; p-&gt;data)</span><br><span class="line">			r = r-&gt;next;</span><br><span class="line">		p-&gt;next = r-&gt;next;</span><br><span class="line">		r-&gt;next = p;</span><br><span class="line">		p = q;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h3 id="其它形式的链表和想说的话"><a href="#其它形式的链表和想说的话" class="headerlink" title="其它形式的链表和想说的话"></a>其它形式的链表和想说的话</h3><ol>
+<li>循环链表，尾节点指向头节点，那么循环结束的标志p-&gt;next != head;</li>
+<li>双链表，分前驱指针和后继指针，不过是书的第一页写上上一本书的id，书的最后一页写上下一本书的id；</li>
+<li>有序链表，说白了排好序的链表，不用你再排序了。</li>
+<li>链表的基本算法都是相通的，时间复杂度几乎都是O(n)。</li>
+<li>有机会补充链表的常见应用。</li>
+</ol>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>操作上，顺序表相对于链表，在插入和删除上不够灵活。链表相对于顺序表，在更新和查询上不那么给力。<br>存储上，顺序表必拥有一片连续的内存区域，而链表则是随机的找内存区域。<br>内容上，链表更装逼。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/C/" rel="tag"># C++</a>
+          
+            <a href="/tags/周报/" rel="tag"># 周报</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2016/12/17/hexo搭建博客/" rel="next" title="利用hexo搭建个人博客">
+                <i class="fa fa-chevron-left"></i> 利用hexo搭建个人博客
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/03/30/基础栈/" rel="prev" title="基础栈">
+                基础栈 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">始终</p>
+              <p class="site-description motion-element" itemprop="description">落月摇情满江树</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">20</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">分类</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">20</span>
+                    <span class="site-state-item-name">标签</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#顺序表"><span class="nav-number">1.</span> <span class="nav-text">顺序表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义"><span class="nav-number">1.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本操作"><span class="nav-number">1.2.</span> <span class="nav-text">基本操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建—create"><span class="nav-number">1.2.1.</span> <span class="nav-text">创建—create</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#初始化—init"><span class="nav-number">1.2.2.</span> <span class="nav-text">初始化—init</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#销毁—destory"><span class="nav-number">1.2.3.</span> <span class="nav-text">销毁—destory</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#插入–insert"><span class="nav-number">1.2.4.</span> <span class="nav-text">插入–insert</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除–del"><span class="nav-number">1.2.5.</span> <span class="nav-text">删除–del</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#更新—update"><span class="nav-number">1.2.6.</span> <span class="nav-text">更新—update</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查询—select"><span class="nav-number">1.2.7.</span> <span class="nav-text">查询—select</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#排序—sort"><span class="nav-number">1.2.8.</span> <span class="nav-text">排序—sort</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#链表"><span class="nav-number">2.</span> <span class="nav-text">链表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义-1"><span class="nav-number">2.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本操作-1"><span class="nav-number">2.2.</span> <span class="nav-text">基本操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#创建"><span class="nav-number">2.2.1.</span> <span class="nav-text">创建</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#初始化"><span class="nav-number">2.2.2.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#销毁"><span class="nav-number">2.2.3.</span> <span class="nav-text">销毁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#插入"><span class="nav-number">2.2.4.</span> <span class="nav-text">插入</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#删除"><span class="nav-number">2.2.5.</span> <span class="nav-text">删除</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#更新"><span class="nav-number">2.2.6.</span> <span class="nav-text">更新</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查询"><span class="nav-number">2.2.7.</span> <span class="nav-text">查询</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#排序"><span class="nav-number">2.2.8.</span> <span class="nav-text">排序</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#其它形式的链表和想说的话"><span class="nav-number">2.3.</span> <span class="nav-text">其它形式的链表和想说的话</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">3.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate"> 
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">始终</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>

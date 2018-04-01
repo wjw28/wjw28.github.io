@@ -1,0 +1,833 @@
+<!DOCTYPE html>
+
+
+
+  
+
+
+<html class="theme-next muse use-motion" lang="zh-CN">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2"/>
+<meta name="theme-color" content="#222">
+
+
+
+
+
+
+
+
+
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=6.1.0" rel="stylesheet" type="text/css" />
+
+
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/favicon-32x32-next.png?v=6.1.0">
+
+
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/favicon-16x16-next.png?v=6.1.0">
+
+
+  <link rel="mask-icon" href="/images/logo.svg?v=6.1.0" color="#222">
+
+
+
+
+
+
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Muse',
+    version: '6.1.0',
+    sidebar: {"position":"left","display":"post","offset":12,"b2t":false,"scrollpercent":false,"onmobile":false},
+    fancybox: false,
+    fastclick: false,
+    lazyload: false,
+    tabs: true,
+    motion: {"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+  
+
+
+
+
+  <meta name="description" content="栈是操作受限的先进后出的表，队列和栈稍有相同的就是队列也是操作受限的，受限之处在于插入操作只能在队尾进行（后方高能不许插队），删除操作只能在队头进行（结完账赶紧走）。如果一直插入的话，很容易发现，一开始插入的被一点一点挤到队的前面去了，后面插入的就离队的尾部近一点，知道最后插入的直接在队尾；总结起来就是：先进先出，先到先得。这和我们日常生活中的很多排队现象是相同的，所以队列在数据结构中应用的很广泛">
+<meta name="keywords" content="学习总结,数据结构C++,队列">
+<meta property="og:type" content="article">
+<meta property="og:title" content="基础队列">
+<meta property="og:url" content="http://yoursite.com/2017/04/04/队列/index.html">
+<meta property="og:site_name" content="始终">
+<meta property="og:description" content="栈是操作受限的先进后出的表，队列和栈稍有相同的就是队列也是操作受限的，受限之处在于插入操作只能在队尾进行（后方高能不许插队），删除操作只能在队头进行（结完账赶紧走）。如果一直插入的话，很容易发现，一开始插入的被一点一点挤到队的前面去了，后面插入的就离队的尾部近一点，知道最后插入的直接在队尾；总结起来就是：先进先出，先到先得。这和我们日常生活中的很多排队现象是相同的，所以队列在数据结构中应用的很广泛">
+<meta property="og:locale" content="zh-CN">
+<meta property="og:updated_time" content="2018-04-01T07:14:31.006Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="基础队列">
+<meta name="twitter:description" content="栈是操作受限的先进后出的表，队列和栈稍有相同的就是队列也是操作受限的，受限之处在于插入操作只能在队尾进行（后方高能不许插队），删除操作只能在队头进行（结完账赶紧走）。如果一直插入的话，很容易发现，一开始插入的被一点一点挤到队的前面去了，后面插入的就离队的尾部近一点，知道最后插入的直接在队尾；总结起来就是：先进先出，先到先得。这和我们日常生活中的很多排队现象是相同的，所以队列在数据结构中应用的很广泛">
+
+
+
+
+
+
+  <link rel="canonical" href="http://yoursite.com/2017/04/04/队列/"/>
+
+
+
+<script type="text/javascript" id="page.configurations">
+  CONFIG.page = {
+    sidebar: "",
+  };
+</script>
+
+  <title>基础队列 | 始终</title>
+  
+
+
+
+
+
+
+
+
+
+  <noscript>
+  <style type="text/css">
+    .use-motion .motion-element,
+    .use-motion .brand,
+    .use-motion .menu-item,
+    .sidebar-inner,
+    .use-motion .post-block,
+    .use-motion .pagination,
+    .use-motion .comments,
+    .use-motion .post-header,
+    .use-motion .post-body,
+    .use-motion .collection-title { opacity: initial; }
+
+    .use-motion .logo,
+    .use-motion .site-title,
+    .use-motion .site-subtitle {
+      opacity: initial;
+      top: initial;
+    }
+
+    .use-motion {
+      .logo-line-before i { left: initial; }
+      .logo-line-after i { right: initial; }
+    }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-CN">
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"> 
+
+<div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/" class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">始终</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <p class="site-subtitle">鸿雁长飞光不度，鱼龙潜跃水成文</p>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button aria-label="切换导航栏">
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        
+          
+  <li class="menu-item menu-item-home">
+    <a href="/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-home"></i> <br />首页</a>
+</li>
+
+      
+        
+        
+          
+  <li class="menu-item menu-item-archives">
+    <a href="/archives/" rel="section">
+      <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />归档</a>
+</li>
+
+      
+
+      
+    </ul>
+  
+
+  
+    
+
+  
+
+  
+</nav>
+
+
+  
+
+
+
+ </div>
+    </header>
+
+    
+
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  
+
+  <article class="post post-type-normal" itemscope itemtype="http://schema.org/Article">
+  
+  
+  
+  <div class="post-block">
+    <link itemprop="mainEntityOfPage" href="http://yoursite.com/2017/04/04/队列/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="始终">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="始终">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h1 class="post-title" itemprop="name headline">基础队列</h1>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-04-04T00:00:00+08:00">2017-04-04</time>
+            
+
+            
+            
+
+            
+          </span>
+
+          
+            <span class="post-category" >
+            
+              <span class="post-meta-divider">|</span>
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-folder-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">分类于</span>
+              
+              
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing"><a href="/categories/数据结构/" itemprop="url" rel="index"><span itemprop="name">数据结构</span></a></span>
+
+                
+                
+              
+            </span>
+          
+
+          
+            
+          
+
+          
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <p>栈是操作受限的先进后出的表，队列和栈稍有相同的就是队列也是操作受限的，<strong>受限之处在于插入操作只能在队尾进行（后方高能不许插队），删除操作只能在队头进行（结完账赶紧走）</strong>。如果一直插入的话，很容易发现，一开始插入的被一点一点挤到队的前面去了，后面插入的就离队的尾部近一点，知道最后插入的直接在队尾；总结起来就是：<strong>先进先出，先到先得</strong>。这和我们日常生活中的很多排队现象是相同的，所以队列在数据结构中应用的很广泛，如消息响应机制等。</p>
+<blockquote>
+<p>排好队呀队排好，谁要加队是傻吊。<br>凡事都要讲道理，先来后到次序好。</p>
+</blockquote>
+<a id="more"></a>
+<h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>由于插入和删除操作的位置分离，插入在队尾进行，俗称<strong>入队</strong>，删除在队头进行，人称<strong>出队</strong>。必然地由着这个性质推断出需要的两位成员：能表示队首和队尾的位置。队也是特殊的线性表，当然呢可以分成数组存储和链式存储，而且待会你还会看到，由于<strong>充分利用空间而出现的循环队列</strong>，而这是栈所不需要的。</p>
+<h2 id="数组队列"><a href="#数组队列" class="headerlink" title="数组队列"></a>数组队列</h2><h3 id="定义"><a href="#定义" class="headerlink" title="定义"></a>定义</h3><p>数组用来标志位置的显然只有下标能担当，一个下标来表示队头，另一个下标来表示队尾。定义内容如下<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">char</span> classname;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> maxsize = <span class="number">100</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Queue</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	classname data[maxsize];</span><br><span class="line">	<span class="keyword">int</span> first;</span><br><span class="line">	<span class="keyword">int</span> last;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h3 id="基本操作"><a href="#基本操作" class="headerlink" title="基本操作"></a>基本操作</h3><h4 id="初始化"><a href="#初始化" class="headerlink" title="初始化"></a>初始化</h4><p>在一个清晨，杂货店前什么人也没有，但老板已经摆出了铺子。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(SqQueue* &amp;Q)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Q = <span class="keyword">new</span> SqQueue;</span><br><span class="line">	Q-&gt;first = <span class="number">-1</span>;</span><br><span class="line">	Q-&gt;last = <span class="number">-1</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>用不合法下标-1表示队列初始的状态。</p>
+<h4 id="入队"><a href="#入队" class="headerlink" title="入队"></a>入队</h4><p>朝阳缓缓升起，杂货店前陆陆续续的来了人，公民们素质很高，都会有”先来后到“的礼貌。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">insert</span><span class="params">(SqQueue* &amp;Q, classname c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (Q-&gt;last == maxsize - <span class="number">1</span>)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	Q-&gt;data[++Q-&gt;last] = c;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>咦，没位置了，我怎么排队。</p>
+<h4 id="出队"><a href="#出队" class="headerlink" title="出队"></a>出队</h4><p>后面的一个家伙指着前面的人说：前面买完东西的赶紧走，空出位置好排队。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">del</span><span class="params">(SqQueue* &amp;Q, classname &amp;c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (Q-&gt;first == Q-&gt;last)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	c = Q-&gt;data[++Q-&gt;first];</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>有人才会有江湖，有踢人。</p>
+<h4 id="队首队尾"><a href="#队首队尾" class="headerlink" title="队首队尾"></a>队首队尾</h4><p>第一和倒一的风采。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">firstQueue</span><span class="params">(SqQueue* Q, classname &amp;c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (Q-&gt;first == Q-&gt;last)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	c = Q-&gt;data[Q-&gt;first];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">lastQueue</span><span class="params">(SqQueue* Q, classname &amp;c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (Q-&gt;first == Q-&gt;last)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	c = Q-&gt;data[Q-&gt;last];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="队满队空"><a href="#队满队空" class="headerlink" title="队满队空"></a>队满队空</h4><p>不能再排队了，或者根本没人在排队。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">isFull</span><span class="params">(SqQueue* Q)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> (Q-&gt;last == maxsize - <span class="number">1</span>)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">bool</span> isEmpty(SqQueue* Q)</span><br><span class="line">&#123;</span><br><span class="line">	<span class="keyword">return</span> (Q-&gt;first == Q-&gt;last)</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<p>什么时候为满？队尾就是容纳量。<br>什么时候为空？队尾和队头在一起。</p>
+<h4 id="建队删队"><a href="#建队删队" class="headerlink" title="建队删队"></a>建队删队</h4><p>建队的过程就是一个个元素入队的过程；<br>删队就是直接删除那个空间。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">create</span><span class="params">(SqQueue* &amp;Q, classname a[], <span class="keyword">size_t</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	init(Q);</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">		insert(Q, a[i]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">del</span><span class="params">(SqQueue* &amp;Q)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">delete</span> Q;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="循环数组队列"><a href="#循环数组队列" class="headerlink" title="循环数组队列"></a>循环数组队列</h2><h3 id="说明"><a href="#说明" class="headerlink" title="说明"></a>说明</h3><p>从上文的数组队列看以看出，在不断的出队过程中，队首下标不断增加，而数组空间内从0到队首下标的哪一段空间确实是被抛弃和浪费了，如果队满了，那则是一种“假满”状态，因为数组空间还有未被利用的空间。出此考虑，我们设计一种方案，能完全的利用整片数组空间，也就是循环数组队列。它的思想是在队满的时候，将<strong>队满的下一个下标和数组空间0下标连接和过渡起来</strong>，好像数组成了一个环，没有最后的位置，只有最满的状态。队首和队尾不再有严格的先后关系，而是作为一种操作标记，因为坐成一圈的人没法像直队那样分出先后。<br>总结上文，循环数组队列不是数组循环，而是在入队出队的操作上改进使之能够满足循环从而充分利用空间。<br>那么，队列的定义依旧不变，变的是操作。</p>
+<h3 id="定义-1"><a href="#定义-1" class="headerlink" title="定义"></a>定义</h3><p>和数组队列一样<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">char</span> classname;</span><br><span class="line"><span class="keyword">const</span> <span class="keyword">int</span> maxsize = <span class="number">100</span>;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Queue</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	classname data[maxsize];</span><br><span class="line">	<span class="keyword">int</span> first;</span><br><span class="line">	<span class="keyword">int</span> last;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h3 id="操作"><a href="#操作" class="headerlink" title="操作"></a>操作</h3><h4 id="初始化-1"><a href="#初始化-1" class="headerlink" title="初始化"></a>初始化</h4><p>这里的初始和数组队列的初始化要区别开来的一个问题是：能不能把first和last都初始化为-1的问题。假设如下情况，在不断插队的过程中last指针已经到了maxsize-1，依着循环，下一个应增加到maxsize%maxsize，即为0，而此时的first指针依旧是-1，这样就永远无法判断队满的状态了，<strong>若想判断成功，则first初始值应该是0。那么，再由于初始化时队一定是空的，故而last初始值要和first初始值一样同为0</strong>。<strong>如此，才可能有队满条件：（last+1）% maxsize == first; 才可能有队空条件：first == last。</strong><br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(SqQueue* &amp;Q)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Q = <span class="keyword">new</span> SqQueue;</span><br><span class="line">	Q-&gt;first = <span class="number">0</span>;</span><br><span class="line">	Q-&gt;last = <span class="number">0</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="进队"><a href="#进队" class="headerlink" title="进队"></a>进队</h4><p>稍有不同的是，last指针的移动方式是：last = (last + 1) % maxsize;<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">insert</span><span class="params">(SqQueue* &amp;Q, classname c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> ((Q-&gt;last + <span class="number">1</span>)%maxsize == Q-&gt;first )</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	Q-&gt;last = (Q-&gt;last + <span class="number">1</span>) % maxsize;</span><br><span class="line">	Q-&gt;data[Q-&gt;last] = c;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="出队-1"><a href="#出队-1" class="headerlink" title="出队"></a>出队</h4><p>同样和进队类似的方式，first指针移动方式是： first = (first + 1) % maxsize;<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">del</span><span class="params">(SqQueue* &amp;Q, classname &amp;c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (Q-&gt;first == Q-&gt;last)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	Q-&gt;first = (Q-&gt;first + <span class="number">1</span>) % maxsize;</span><br><span class="line">	c = Q-&gt;data[Q-&gt;first];</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="队首队尾-1"><a href="#队首队尾-1" class="headerlink" title="队首队尾"></a>队首队尾</h4><p>和数组队列同。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">firstQueue</span><span class="params">(SqQueue* Q, classname &amp;c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (Q-&gt;first == Q-&gt;last)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	c = Q-&gt;data[Q-&gt;first];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">lastQueue</span><span class="params">(SqQueue* Q, classname &amp;c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (Q-&gt;first == Q-&gt;last)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	c = Q-&gt;data[Q-&gt;last];</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="队满队空-1"><a href="#队满队空-1" class="headerlink" title="队满队空"></a>队满队空</h4><p>前文已明。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">isFull</span><span class="params">(SqQueue* Q)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> ((Q-&gt;last + <span class="number">1</span>) % maxsize == Q-&gt;first);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">isEmpty</span><span class="params">(SqQueue* Q)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span>  (Q-&gt;first == Q-&gt;last);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="建队和删队"><a href="#建队和删队" class="headerlink" title="建队和删队"></a>建队和删队</h4><p>和数组队列一模一样。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">create</span><span class="params">(SqQueue* &amp;Q, classname a[], <span class="keyword">size_t</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	init(Q);</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">		insert(Q, a[i]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">del</span><span class="params">(SqQueue* &amp;Q)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">delete</span> Q;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="链队"><a href="#链队" class="headerlink" title="链队"></a>链队</h2><h3 id="定义-2"><a href="#定义-2" class="headerlink" title="定义"></a>定义</h3><p>和数组不同，链队由于在内存中随机寻找空间，不需要考虑空间利用的问题，这也就带来了方便的操作。然而，需要考虑的另一个问题是：队首和队空的位置如何表示？如果用头节点表示队首，尾节点表示队尾，不是不可以，是太狼狈了，每次要循环寻找队尾，是一种队时间的浪费。那么，可不可以想个办法，让队尾和队首可以轻易找到？或者队尾就在队首身边？一个可行的方案就是，<strong>制造一个同时含有指向队首和队尾的指针的特殊节点</strong>。而那些队中的节点还是和之前一样，一个数据域，一个指针域。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">typedef</span> <span class="keyword">char</span> classname;</span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">Node</span></span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	classname data;</span><br><span class="line">	NodeQueue* next;</span><br><span class="line">&#125;;</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">struct</span> <span class="title">NodeQueue</span>      //指向队首和队尾的特殊节点</span></span><br><span class="line"><span class="class">&#123;</span></span><br><span class="line">	Node* first;</span><br><span class="line">	Node* last;</span><br><span class="line">&#125;;</span><br></pre></td></tr></table></figure></p>
+<h3 id="基本操作-1"><a href="#基本操作-1" class="headerlink" title="基本操作"></a>基本操作</h3><h4 id="初始化-2"><a href="#初始化-2" class="headerlink" title="初始化"></a>初始化</h4><p>新建NodeQueue，将NodeQueue的first和last指针都置空。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">init</span><span class="params">(NodeQueue* &amp;Q)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Q = <span class="keyword">new</span> NodeQueue;</span><br><span class="line">	Q-&gt;first = <span class="literal">NULL</span>;</span><br><span class="line">	Q-&gt;last = <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="队空"><a href="#队空" class="headerlink" title="队空"></a>队空</h4><p>在NodeQueue的first指针为空的时候即是队空的时刻。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">isEmpty</span><span class="params">(NodeQueue* &amp;Q)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">return</span> Q-&gt;first == <span class="literal">NULL</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="进队-1"><a href="#进队-1" class="headerlink" title="进队"></a>进队</h4><p>特殊情况是队为空的时候<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">insert</span><span class="params">(NodeQueue* &amp;Q, classname c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	Node* p = <span class="keyword">new</span> Node;</span><br><span class="line">	p-&gt;data = c;</span><br><span class="line">	p-&gt;next = <span class="literal">NULL</span>;</span><br><span class="line">	<span class="keyword">if</span> (Q-&gt;first == <span class="literal">NULL</span>)</span><br><span class="line">		Q-&gt;first = Q-&gt;last = p;      <span class="comment">//若无队首，则该元素是队首和队尾</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		Q-&gt;last-&gt;next = p;</span><br><span class="line">		Q-&gt;last = p;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="出队-2"><a href="#出队-2" class="headerlink" title="出队"></a>出队</h4><p>特殊情况是队首和队空相同<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">del</span><span class="params">(NodeQueue* &amp;Q, classname &amp;c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (Q-&gt;first == <span class="literal">NULL</span>)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	Node* p = Q-&gt;first;</span><br><span class="line">	<span class="keyword">if</span> (Q-&gt;first == Q-&gt;last)</span><br><span class="line">		Q-&gt;first = Q-&gt;last = <span class="literal">NULL</span>;    <span class="comment">//仅有一个元素</span></span><br><span class="line">	<span class="keyword">else</span></span><br><span class="line">	&#123;</span><br><span class="line">		Q-&gt;first = Q-&gt;first-&gt;next;</span><br><span class="line">		c = p-&gt;data;</span><br><span class="line">		<span class="keyword">delete</span> p;</span><br><span class="line">	&#125;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="队首队尾-2"><a href="#队首队尾-2" class="headerlink" title="队首队尾"></a>队首队尾</h4><p>没什么好说哦。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">firstQueue</span><span class="params">(NodeQueue* Q, classname &amp;c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (Q-&gt;first == <span class="literal">NULL</span>)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	c = Q-&gt;first-&gt;data;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">bool</span> <span class="title">lastQueue</span><span class="params">(NodeQueue* Q, classname &amp;c)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	<span class="keyword">if</span> (Q-&gt;first == <span class="literal">NULL</span>)</span><br><span class="line">		<span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">	c = Q-&gt;last-&gt;data;</span><br><span class="line">	<span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h4 id="建队和删队-1"><a href="#建队和删队-1" class="headerlink" title="建队和删队"></a>建队和删队</h4><p>建队和以前的一样，一个个的插入。<br>删队则是一个个的出队。<br><figure class="highlight cpp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">create</span><span class="params">(NodeQueue* &amp;Q, classname a[], <span class="keyword">size_t</span> n)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	init(Q);</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">size_t</span> i = <span class="number">0</span>; i &lt; n; i++)</span><br><span class="line">		insert(Q, a[i]);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">void</span> <span class="title">destory</span><span class="params">(NodeQueue* &amp;Q)</span></span></span><br><span class="line"><span class="function"></span>&#123;</span><br><span class="line">	classname c;</span><br><span class="line">	<span class="keyword">while</span> (Q-&gt;first != <span class="literal">NULL</span>)</span><br><span class="line">		del(Q, c);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure></p>
+<h2 id="总结"><a href="#总结" class="headerlink" title="总结"></a>总结</h2><p>至此已经结束了队列的基本讲解。回过头发现，这些操作都是基本单链表的基本操作。祝君好运。</p>
+
+      
+    </div>
+
+    
+
+    
+    
+    
+
+    
+
+    
+
+    
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/学习总结/" rel="tag"># 学习总结</a>
+          
+            <a href="/tags/数据结构C/" rel="tag"># 数据结构C++</a>
+          
+            <a href="/tags/队列/" rel="tag"># 队列</a>
+          
+        </div>
+      
+
+      
+      
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/03/30/基础栈/" rel="next" title="基础栈">
+                <i class="fa fa-chevron-left"></i> 基础栈
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/04/23/简易成绩管理/" rel="prev" title="简易成绩管理">
+                简易成绩管理 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </div>
+  
+  
+  
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+  
+
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap">
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview-wrap">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview-wrap sidebar-panel">
+        <div class="site-overview">
+          <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+            
+              <p class="site-author-name" itemprop="name">始终</p>
+              <p class="site-description motion-element" itemprop="description">落月摇情满江树</p>
+          </div>
+
+          
+            <nav class="site-state motion-element">
+              
+                <div class="site-state-item site-state-posts">
+                
+                  <a href="/archives/">
+                
+                    <span class="site-state-item-count">20</span>
+                    <span class="site-state-item-name">日志</span>
+                  </a>
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-categories">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">7</span>
+                    <span class="site-state-item-name">分类</span>
+                  
+                </div>
+              
+
+              
+                
+                
+                <div class="site-state-item site-state-tags">
+                  
+                    
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                      
+                    
+                    <span class="site-state-item-count">20</span>
+                    <span class="site-state-item-name">标签</span>
+                  
+                </div>
+              
+            </nav>
+          
+
+          
+
+          
+
+          
+          
+
+          
+          
+
+          
+            
+          
+          
+
+        </div>
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#前言"><span class="nav-number">1.</span> <span class="nav-text">前言</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数组队列"><span class="nav-number">2.</span> <span class="nav-text">数组队列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义"><span class="nav-number">2.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本操作"><span class="nav-number">2.2.</span> <span class="nav-text">基本操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#初始化"><span class="nav-number">2.2.1.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#入队"><span class="nav-number">2.2.2.</span> <span class="nav-text">入队</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#出队"><span class="nav-number">2.2.3.</span> <span class="nav-text">出队</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#队首队尾"><span class="nav-number">2.2.4.</span> <span class="nav-text">队首队尾</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#队满队空"><span class="nav-number">2.2.5.</span> <span class="nav-text">队满队空</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#建队删队"><span class="nav-number">2.2.6.</span> <span class="nav-text">建队删队</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#循环数组队列"><span class="nav-number">3.</span> <span class="nav-text">循环数组队列</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#说明"><span class="nav-number">3.1.</span> <span class="nav-text">说明</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#定义-1"><span class="nav-number">3.2.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#操作"><span class="nav-number">3.3.</span> <span class="nav-text">操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#初始化-1"><span class="nav-number">3.3.1.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进队"><span class="nav-number">3.3.2.</span> <span class="nav-text">进队</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#出队-1"><span class="nav-number">3.3.3.</span> <span class="nav-text">出队</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#队首队尾-1"><span class="nav-number">3.3.4.</span> <span class="nav-text">队首队尾</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#队满队空-1"><span class="nav-number">3.3.5.</span> <span class="nav-text">队满队空</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#建队和删队"><span class="nav-number">3.3.6.</span> <span class="nav-text">建队和删队</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#链队"><span class="nav-number">4.</span> <span class="nav-text">链队</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#定义-2"><span class="nav-number">4.1.</span> <span class="nav-text">定义</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#基本操作-1"><span class="nav-number">4.2.</span> <span class="nav-text">基本操作</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#初始化-2"><span class="nav-number">4.2.1.</span> <span class="nav-text">初始化</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#队空"><span class="nav-number">4.2.2.</span> <span class="nav-text">队空</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#进队-1"><span class="nav-number">4.2.3.</span> <span class="nav-text">进队</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#出队-2"><span class="nav-number">4.2.4.</span> <span class="nav-text">出队</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#队首队尾-2"><span class="nav-number">4.2.5.</span> <span class="nav-text">队首队尾</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#建队和删队-1"><span class="nav-number">4.2.6.</span> <span class="nav-text">建队和删队</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#总结"><span class="nav-number">5.</span> <span class="nav-text">总结</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright">&copy; <span itemprop="copyrightYear">2018</span>
+  <span class="with-love" id="animate"> 
+    <i class="fa fa-user"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">始终</span>
+
+  
+
+  
+</div>
+
+
+
+
+  <div class="powered-by">由 <a class="theme-link" target="_blank" href="https://hexo.io">Hexo</a> 强力驱动</div>
+
+
+
+  <span class="post-meta-divider">|</span>
+
+
+
+  <div class="theme-info">主题 &mdash; <a class="theme-link" target="_blank" href="https://github.com/theme-next/hexo-theme-next">NexT.Muse</a> v6.1.0</div>
+
+
+
+
+        
+
+
+
+
+
+
+
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+  
+
+  
+  
+    <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+  
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=6.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=6.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=6.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=6.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=6.1.0"></script>
+
+
+
+  
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+
+  
+
+  
+
+  
+  
+
+  
+
+  
+
+  
+
+  
+
+</body>
+</html>
