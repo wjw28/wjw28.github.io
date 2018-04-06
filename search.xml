@@ -19,8 +19,8 @@
         <category>计算机网络</category>
       </categories>
       <tags>
-        <tag>学习总结</tag>
         <tag>TCP/IP</tag>
+        <tag>学习总结</tag>
       </tags>
   </entry>
   <entry>
@@ -207,9 +207,9 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[类与对象的使用1]]></title>
-    <url>%2F2016%2F10%2F09%2F%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1%E7%9A%84%E4%BD%BF%E7%94%A81%2F</url>
-    <content type="text"><![CDATA[这次的主题是关于构造函数和析构函数。 类的构造函数帮助类初始化对象的数据成员，任何对象的创建都会执行构造函数。 可以轻易地知道构造函数既有函数之名，很多地方可以说与普通函数无所区别。只有三个地方特异，一是函数名必须与类名相同，二是无返回类型，三是拥有初始化列表（唯一初始化const成员的地方，初始化顺序同样由函数参数列表决定（由右向左的顺序初始化））。其实还有一个值得注意的地方是构造函数不能定义成const类型，其中一个原因是方便创建一个const类型对象。 类的析构函数帮助类清理对象（栈区）所占空间，在在每一个对象的生命周期完毕时调用。 析构函数同样固定了函数名——~类名，没有返回类型，不能定义成const类型（对象都要被销毁了）。而且类里面定义有指针成员时，一般在析构函数里头delete指针成员，因为自己用指针开辟的内存区域不在栈区，而在堆区。调用析构函数的次序和对象作用区域内调用构造函数的次序相反。 下面来一小段代码。 12345678910111213141516171819202122232425#include&lt;iostream&gt;using namespace std;class demo&#123;int a;int *p;public: demo():a(0) &#123; cout &lt;&lt; &quot;调用构造函数&quot; &lt;&lt; endl; p = new int(0); &#125; ~demo() &#123; cout &lt;&lt; &quot;调用析构函数&quot; &lt;&lt; endl; delete p; &#125;&#125;;int main()&#123; demo B, *C; C = new demo; delete C; return 0;&#125; 12345运行结果1：调用构造函数调用构造函数调用析构函数调用析构函数 若是把C = new demo;和delete C注释掉，123则运行结果2：调用构造函数调用构造函数 若是把delete C注释掉，1234则运行结果3：调用构造函数调用构造函数调用析构函数 由运行结果1和2，容易想像到声明对象指针不调用构造函数，只有该指针new demo时才开始调用； 再由运行结果1和3，也可以清楚的知道在delete对象指针时实质上是调用了类的析构函数，至于原因，你可以把delete看作一个函数，右边跟着的是它的参数，在本程序中右边跟着的是demo类型实参，在声明delete的时候形参肯定不是demo类型的，所以把该实参地址传给类的析构函数，因为析构函数能清楚的销毁这个对象。 构造和析构函数在继承方面的问题，下面也简单说说。因为创建派生类对象时一定会调用该类的父类的构造函数，层层往上，直到一定会调用最高层级的父类的构造函数。所以在创建派生类对象时，从最高层级父类开始调用，再到下一层，直到本类构造函数。而析构函数和构造函数相反，所以析构的对象从本派生类开始，之后，若是该派生类里面还定义有非基本类型的成员，则析构该成员对象，之后，再往上一层父类，同理，一直到最高层级父类才结束。有关于构造和析构的讲解到此结束，还有疑问的地方欢迎提问。]]></content>
+    <title><![CDATA[文件流再探]]></title>
+    <url>%2F2016%2F10%2F09%2F%E6%96%87%E4%BB%B6%E6%B5%81%E5%86%8D%E6%8E%A2%2F</url>
+    <content type="text"><![CDATA[来一小段代码： 12345678910111213141516171819202122#include&lt;fstream&gt;#include&lt;iostream&gt;#include&lt;cstdlib&gt;using namespace std;int main()&#123; ifstream in_stream; ofstream out_stream; in_stream.open("D:c++\infile.txt");//问题1 out_stream.open("outfile.txt"); int a, b; if(in_stream.fail())&#123; //问题2 cout &lt;&lt; "failed" &lt;&lt; endl; exit(1); &#125; in_stream &gt;&gt; a &gt;&gt; b; out_stream &lt;&lt; "a + b = " &lt;&lt; (a+b) &lt;&lt; endl; in_stream.close(); out_stream.close(); return 0;&#125; 现在来看第一个小问题： in_stream.open(&quot;D:c++\infile.txt&quot;);//问题1 调用成员函数open参数文件名的规范，我们知道，一个完整的文件名是包含这个文件的路径及其文件名的，现在我把完整的文件名作为参数，为什么会有错误？呵，仔细想想一个细节，\字符需要转义(\\)。所以这里应当改回： in_stream.open(&quot;D:c++\\infile.txt&quot;);//问题1正解 第二个重要的问题就是检查流操作的正确性： 1234if(in_stream.fail())&#123; //问题2 cout &lt;&lt; "failed" &lt;&lt; endl; exit(1); &#125; 我们常常需要判断一个流对象是否成功连接到一个文件，因此，在一个流对象调用open之后总应该调用fail来测试，这也是一个必要的习惯。成员函数fail不接受任何参数，返回一个bool类型。它的原型是bool ifstream::fail();和 bool ofstream::fail();。这样，能清楚地知道文件的连接是否到位。接下来就说另一个重要的成员函数eof。用它来判断文件尾，它同样不接受任何参数，返回bool值。例如以下语句： 123if(!in_stream.eof())&#123; cout &lt;&lt; "Not done" &lt;&lt; endl;&#125;else cout &lt;&lt; "file done" &lt;&lt; endl; 至于为甚么需要预判文件尾，一个原因是在程序运行过程中，流对象从不返回来去读取已经读取过的内容，即像时间一样不去倒流。最后补充一个关于输出文件的小技巧，你若想要把内容写入到一个已经存在的文件中，而且又不想覆写这个文件，只想把内容追加到文件尾，那么你可以这样调用open： out_stream.open(&quot;outfile.txt&quot;,ios::app); //两个参数 1 这样你这次输出的内容会追加到outfile.txt（已经存在）的文件尾了。]]></content>
       <categories>
         <category>c++</category>
       </categories>
@@ -219,9 +219,9 @@
       </tags>
   </entry>
   <entry>
-    <title><![CDATA[文件流再探]]></title>
-    <url>%2F2016%2F10%2F09%2F%E6%96%87%E4%BB%B6%E6%B5%81%E5%86%8D%E6%8E%A2%2F</url>
-    <content type="text"><![CDATA[来一小段代码： 12345678910111213141516171819202122#include&lt;fstream&gt;#include&lt;iostream&gt;#include&lt;cstdlib&gt;using namespace std;int main()&#123; ifstream in_stream; ofstream out_stream; in_stream.open("D:c++\infile.txt");//问题1 out_stream.open("outfile.txt"); int a, b; if(in_stream.fail())&#123; //问题2 cout &lt;&lt; "failed" &lt;&lt; endl; exit(1); &#125; in_stream &gt;&gt; a &gt;&gt; b; out_stream &lt;&lt; "a + b = " &lt;&lt; (a+b) &lt;&lt; endl; in_stream.close(); out_stream.close(); return 0;&#125; 现在来看第一个小问题： in_stream.open(&quot;D:c++\infile.txt&quot;);//问题1 调用成员函数open参数文件名的规范，我们知道，一个完整的文件名是包含这个文件的路径及其文件名的，现在我把完整的文件名作为参数，为什么会有错误？呵，仔细想想一个细节，\字符需要转义(\\)。所以这里应当改回： in_stream.open(&quot;D:c++\\infile.txt&quot;);//问题1正解 第二个重要的问题就是检查流操作的正确性： 1234if(in_stream.fail())&#123; //问题2 cout &lt;&lt; "failed" &lt;&lt; endl; exit(1); &#125; 我们常常需要判断一个流对象是否成功连接到一个文件，因此，在一个流对象调用open之后总应该调用fail来测试，这也是一个必要的习惯。成员函数fail不接受任何参数，返回一个bool类型。它的原型是bool ifstream::fail();和 bool ofstream::fail();。这样，能清楚地知道文件的连接是否到位。接下来就说另一个重要的成员函数eof。用它来判断文件尾，它同样不接受任何参数，返回bool值。例如以下语句： 123if(!in_stream.eof())&#123; cout &lt;&lt; "Not done" &lt;&lt; endl;&#125;else cout &lt;&lt; "file done" &lt;&lt; endl; 至于为甚么需要预判文件尾，一个原因是在程序运行过程中，流对象从不返回来去读取已经读取过的内容，即像时间一样不去倒流。最后补充一个关于输出文件的小技巧，你若想要把内容写入到一个已经存在的文件中，而且又不想覆写这个文件，只想把内容追加到文件尾，那么你可以这样调用open： out_stream.open(&quot;outfile.txt&quot;,ios::app); //两个参数 1 这样你这次输出的内容会追加到outfile.txt（已经存在）的文件尾了。]]></content>
+    <title><![CDATA[类与对象的使用1]]></title>
+    <url>%2F2016%2F10%2F09%2F%E7%B1%BB%E4%B8%8E%E5%AF%B9%E8%B1%A1%E7%9A%84%E4%BD%BF%E7%94%A81%2F</url>
+    <content type="text"><![CDATA[这次的主题是关于构造函数和析构函数。 类的构造函数帮助类初始化对象的数据成员，任何对象的创建都会执行构造函数。 可以轻易地知道构造函数既有函数之名，很多地方可以说与普通函数无所区别。只有三个地方特异，一是函数名必须与类名相同，二是无返回类型，三是拥有初始化列表（唯一初始化const成员的地方，初始化顺序同样由函数参数列表决定（由右向左的顺序初始化））。其实还有一个值得注意的地方是构造函数不能定义成const类型，其中一个原因是方便创建一个const类型对象。 类的析构函数帮助类清理对象（栈区）所占空间，在在每一个对象的生命周期完毕时调用。 析构函数同样固定了函数名——~类名，没有返回类型，不能定义成const类型（对象都要被销毁了）。而且类里面定义有指针成员时，一般在析构函数里头delete指针成员，因为自己用指针开辟的内存区域不在栈区，而在堆区。调用析构函数的次序和对象作用区域内调用构造函数的次序相反。 下面来一小段代码。 12345678910111213141516171819202122232425#include&lt;iostream&gt;using namespace std;class demo&#123;int a;int *p;public: demo():a(0) &#123; cout &lt;&lt; &quot;调用构造函数&quot; &lt;&lt; endl; p = new int(0); &#125; ~demo() &#123; cout &lt;&lt; &quot;调用析构函数&quot; &lt;&lt; endl; delete p; &#125;&#125;;int main()&#123; demo B, *C; C = new demo; delete C; return 0;&#125; 12345运行结果1：调用构造函数调用构造函数调用析构函数调用析构函数 若是把C = new demo;和delete C注释掉，123则运行结果2：调用构造函数调用构造函数 若是把delete C注释掉，1234则运行结果3：调用构造函数调用构造函数调用析构函数 由运行结果1和2，容易想像到声明对象指针不调用构造函数，只有该指针new demo时才开始调用； 再由运行结果1和3，也可以清楚的知道在delete对象指针时实质上是调用了类的析构函数，至于原因，你可以把delete看作一个函数，右边跟着的是它的参数，在本程序中右边跟着的是demo类型实参，在声明delete的时候形参肯定不是demo类型的，所以把该实参地址传给类的析构函数，因为析构函数能清楚的销毁这个对象。 构造和析构函数在继承方面的问题，下面也简单说说。因为创建派生类对象时一定会调用该类的父类的构造函数，层层往上，直到一定会调用最高层级的父类的构造函数。所以在创建派生类对象时，从最高层级父类开始调用，再到下一层，直到本类构造函数。而析构函数和构造函数相反，所以析构的对象从本派生类开始，之后，若是该派生类里面还定义有非基本类型的成员，则析构该成员对象，之后，再往上一层父类，同理，一直到最高层级父类才结束。有关于构造和析构的讲解到此结束，还有疑问的地方欢迎提问。]]></content>
       <categories>
         <category>c++</category>
       </categories>
